@@ -171,6 +171,24 @@
     titleEffect();
 
 
+    window.addEventListener('keydown', function(e) {
+        if(e.key === 'f2') {
+            let loc = location.toString();
+            if (loc.includes("?n=")) {
+                let roomNumber = loc.split("?n=")[1]
+                fetch('/leave', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        roomNumber: roomNumber,
+                        leaver: localStorage.getItem('nick')
+                    }),
+                    keepalive: true
+                })
+            }
+            alert('방 참여 상태가 초기화되었습니다.')
+        }
+    })
 
 
 
