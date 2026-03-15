@@ -14,6 +14,9 @@ nicks = {}
 draw_completed_count = {}
 ready_players = {}
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+rooms_file_path = os.path.join(current_dir, 'static', 'rooms.txt')
+
 def shuffle_together(list1, list2):
     combined = list(zip(list1, list2))
     random.shuffle(combined)
@@ -73,7 +76,7 @@ def leave():
     write_this = ""
     playing = False
 
-    with open('static/rooms.txt', 'r', encoding='utf-8') as f:
+    with open(rooms_file_path, 'r', encoding='utf-8') as f:
         room_file = f.read().split('\n')
 
     for i in range(0, len(room_file)):
@@ -100,7 +103,7 @@ def leave():
         else:
             write_this += current_str + "\n"
 
-    with open('static/rooms.txt', 'w', encoding='utf-8') as f:
+    with open(rooms_file_path, 'w', encoding='utf-8') as f:
         f.write(write_this.rstrip())
 
     temp = left_players.split(";")
@@ -143,7 +146,7 @@ def create_room():
     rn = data.get('roomNumber')
     nick = data.get('nick')
 
-    with open('static/rooms.txt', 'a', encoding='utf-8') as f:
+    with open(rooms_file_path, 'a', encoding='utf-8') as f:
         f.write('\n[' + str(rn) + ']:0,black;white,2,10,1,' + str(nick) + ',' + str(nick))
 
     return ""
@@ -157,7 +160,7 @@ def jr():
     room_file = []
     write_this = ""
 
-    with open('static/rooms.txt', 'r', encoding='utf-8') as f:
+    with open(rooms_file_path, 'r', encoding='utf-8') as f:
         room_file = f.read().split('\n')
 
     for i in range(0, len(room_file)):
@@ -171,7 +174,7 @@ def jr():
         else:
             write_this += current_str + "\n"
 
-    with open('static/rooms.txt', 'w', encoding='utf-8') as f:
+    with open(rooms_file_path, 'w', encoding='utf-8') as f:
         f.write(write_this.rstrip())
 
     return write_this.rstrip()
@@ -227,7 +230,7 @@ def gs(data):
 
     write_this = ""
 
-    with open('static/rooms.txt', 'r', encoding='utf-8') as f:
+    with open(rooms_file_path, 'r', encoding='utf-8') as f:
         room_file = f.read().split('\n')
 
         for i in range(0, len(room_file)):
@@ -242,7 +245,7 @@ def gs(data):
             else:
                 write_this += current_str + "\n"
 
-    with open('static/rooms.txt', 'w', encoding='utf-8') as f:
+    with open(rooms_file_path, 'w', encoding='utf-8') as f:
         f.write(write_this.rstrip())
 
 
@@ -254,10 +257,13 @@ def gs(data):
     black_cards_temp = []
     white_cards_temp = []
 
-    with open('static/cards/' + using1 + '.txt', 'r', encoding='utf-8') as f:
+    using1path = os.path.join(current_dir, 'static', 'cards', using1 + '.txt')
+    using2path = os.path.join(current_dir, 'static', 'cards', using2 + '.txt')
+
+    with open(using1path, 'r', encoding='utf-8') as f:
         black_cards_temp = f.read().split('\n')
 
-    with open('static/cards/' + using2 + '.txt', 'r', encoding='utf-8') as f:
+    with open(using2path, 'r', encoding='utf-8') as f:
         white_cards_temp = f.read().split('\n')
 
 
