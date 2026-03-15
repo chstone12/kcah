@@ -244,6 +244,8 @@
 
 
     async function openThisPage() {
+
+
         const nick = localStorage.getItem('nick');
         let loc = location.toString();
         const response = await fetch('/static/rooms.txt');
@@ -255,8 +257,8 @@
             location.reload()
             alert('닉네임을 정해야 게임에 참여할 수 있습니다!')
         }
-        else if(roomList.includes(',' + nick + ';') || roomList.includes(',' + nick + ',') || roomList.includes(';' + nick + '\n') || roomList.includes(';' + nick + ';')) {
-            alert('당신은 이미 다른 방에 참여하고 있습니다. 만약 다른 방에 참여하고 있지 않은데도 이 창이 떴다면, 메인화면에서 f2를 눌러주세요. (다른 방에 참여하고 있는데도 f2를 누르면 버그가 날 수 있으니, 꼭 참여하고 있지 않은 게 맞는지 확인해주세요.)')
+        else if(!(localStorage.getItem('ignoreAndJoin') === '1') && (roomList.includes(',' + nick + ';') || roomList.includes(',' + nick + ',') || roomList.includes(';' + nick + '\n') || roomList.includes(';' + nick + ';'))) {
+            alert('당신은 이미 다른 방에 참여하고 있습니다.')
             history.replaceState(null, '', '/room_not_found');
         }
 
@@ -327,7 +329,7 @@
 
         else {
 
-            let r = String.fromCharCode(Math.floor(Math.random() * 26) + 97) + String.fromCharCode(Math.floor(Math.random() * 26) + 97) + Math.floor(Math.random() * 10000000).toString();
+            let r = String.fromCharCode(Math.floor(Math.random() * 26) + 97) + String.fromCharCode(Math.floor(Math.random() * 26) + 97) + String.fromCharCode(Math.floor(Math.random() * 26) + 97) + Math.floor(Math.random() * 10000000).toString();
             history.replaceState(null, '', '/room?n=' + r)
             let n = localStorage.getItem('nick')
             BJ = n;

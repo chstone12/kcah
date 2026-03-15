@@ -78,12 +78,15 @@
     </span>
 </div>
 
+
+<input type="checkbox" onclick="bug()" id="IGNORE_AND_JOIN" style="position:absolute; top:1000px; left:100px;"><label
+        for="IGNORE_AND_JOIN"></label>
+<span style="position:absolute; top:1000px; left:130px; color:#666666">아무 방에도 참여하고 있지 않은데 참여하고 있다고 뜨면 누르는 버튼<br>(다른 방에 참여하고 있는데도 이 버튼을 누르면 버그가 날 겁니다. 꼭 참여하고 있지 않은 게 맞는지 확인해주세요.)</span>
+
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script src="/static/socket.js"></script>
 <script src="/static/nickname.js"></script>
 <script>
-
-
 
     const splashElem = document.getElementById('SPLASH');
 
@@ -171,24 +174,15 @@
     titleEffect();
 
 
-    window.addEventListener('keydown', function(e) {
-        if(e.key === 'f2') {
-            let loc = location.toString();
-            if (loc.includes("?n=")) {
-                let roomNumber = loc.split("?n=")[1]
-                fetch('/leave', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        roomNumber: roomNumber,
-                        leaver: localStorage.getItem('nick')
-                    }),
-                    keepalive: true
-                })
-            }
-            alert('방 참여 상태가 초기화되었습니다.')
-        }
-    })
+    localStorage.setItem('ignoreAndJoin', '0')
+
+    function bug() {
+        let k = document.getElementById('IGNORE_AND_JOIN').checked;
+        if(k) localStorage.setItem('ignoreAndJoin', '1')
+        else localStorage.setItem('ignoreAndJoin', '0')
+    }
+
+
 
 
 

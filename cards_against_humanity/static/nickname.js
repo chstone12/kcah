@@ -21,8 +21,8 @@ async function setNick() {
         document.getElementById('NICKNAME_INFO').innerText = '닉네임은 20바이트 이하여야 됩니다!'
         return;
     }
-    else if(k.includes(',' + currentNick + ';') || k.includes(',' + currentNick + ',') || k.includes(';' + currentNick + '\n') || k.includes(';' + currentNick + ';')) {
-        alert('플레이 도중에는 닉을 바꿀 수 없습니다! 만약 다른 방에 참여하고 있지 않은데도 이 메시지가 떴다면, f2를 눌러주세요. (다른 방에 참여하고 있는데도 f2를 누르면 버그가 날 수 있으니, 꼭 참여하고 있지 않은 게 맞는지 확인해주세요.)')
+    else if(!(localStorage.getItem('ignoreAndJoin') === '1') && (k.includes(',' + currentNick + ';') || k.includes(',' + currentNick + ',') || k.includes(';' + currentNick + '\n') || k.includes(';' + currentNick + ';'))) {
+        document.getElementById('NICKNAME_INFO').innerText = '플레이 도중에는 닉을 바꿀 수 없습니다!'
         return;
     }
 
