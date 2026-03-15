@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>비인간적인 카드게임방</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        .SHADOW {
+            box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px, rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
+        }
+        .DROPSHADOW {
+            box-shadow: rgba(24, 24, 24, 0.4) 5px 5px, rgba(24, 24, 24, 0.3) 10px 10px, rgba(24, 24, 24, 0.2) 15px 15px, rgba(24, 24, 24, 0.1) 20px 20px, rgba(24, 24, 24, 0.05) 25px 25px;
+        }
+        .DESC {
+            background-color: #333333;
+            width: 300px;
+            padding: 20px;
+        }
+        .CARDDESC {
+            width: 200px;
+            color: lightgoldenrodyellow;
+            font-size:16px;
+            position: absolute;
+            left: 470px;
+            top: 75px;
+        }
+        .WHITE_CARD {
+            position: absolute; width: 276px; height: 388px; border-radius: 13px; background: rgb(0, 0, 0); border-width: 2px;
+            border-style: solid; border-color: rgb(0, 0, 0); left: 822px; top: 50px; padding: 20px; font-family: noto, serif;
+            box-shadow: rgba(0, 0, 0, 0.58) -6px -2px 16px 0, rgba(0, 0, 0, 0.8) 6px 2px 16px 0;
+        }
+        .BLACK_CARD {
+            position: absolute; width: 276px; height: 388px; border-radius: 13px; background: rgb(255, 255, 255); border-width: 2px;
+            border-style: solid; border-color: rgb(255, 255, 255); padding: 20px; z-index: 10; font-family: noto, serif;
+            box-shadow: rgba(0, 0, 0, 0.58) -6px -2px 16px 0, rgba(0, 0, 0, 0.8) 6px 2px 16px 0;
+        }
+        @font-face {
+            font-family: 'noto';
+            src: url('/static/font.ttf') format('truetype');
+        }
+        .MY_SENTENCE {
+            background-color: #333333;
+            width: 800px;
+            padding: 20px;
+            position:absolute;
+            left:100px;
+            top:800px;
+        }
+        .SCOREBOARD {
+            background-color: #111111;
+            padding: 15px;
+            position: absolute;
+            left: 1600px;
+            top: 70px;
+            font-family: noto, serif;
+        }
+        .CHAT_DISPLAY {
+            color: #888888;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body style="background-color: #222222">
+
+<span id="ROOM_TITLE" style="text-shadow: darkred 0 0 9px; position:absolute; left:70px; top: 30px; color:indianred; font-size:50px; width:900px; font-family: noto, serif;"></span>
+<span id="CURRENT_NICK" style="position:absolute; left: 1280px; top: 50px; font-size: 20px; color: gold; width: 400px; font-family: noto, serif">닉네임: </span>
+<span id="CURRENT_CZAR" style="position:absolute; left:1280px;  top:80px; font-size:20px;  color:goldenrod; width:400px; font-family: noto, serif"></span>
+
+<div class="DESC DROPSHADOW" style="position:absolute; top: 120px; left: 70px; font-family: noto, serif">
+    <span style="color: deepskyblue; font-size: 25px;">True Girls <br> <br> </span>
+    <span id="PARTICIPANTS" style="color: lightblue; font-size: 20px;"></span>
+</div>
+
+<div class="DESC SHADOW" style="position: absolute; top: 120px; left: 500px; width:700px;" id="ROOM_SETTING">
+    <span style="color: yellow; font-size:30px;">방 설정</span> <br> <br>
+    <span style="color: lightyellow; font-size:22px;">카드 배열:　</span>
+    <select id="SELECT_CARD_ARRAY" title="카드 배열을 선택하세요" style="width: 300px; height: 35px; font-size: 22px; font-family: noto, serif;"></select>
+    <div class="CARDDESC">
+        <span id="CARD_DESC" style="font-family: noto, serif;"></span>
+    </div>
+    <br>  <br>
+    <span style="color: lightyellow; font-size:22px;">게임이 끝나는 조건:</span>
+    <select id="CONDITION_NUMBER" title="숫자를 선택하세요" style="width: 60px; height: 35px; font-size: 22px; font-family: noto, serif;"></select>
+    <select id="CONDITION_OPTION" title="조건을 선택하세요" style="width: 300px; height: 35px; font-size: 22px; font-family: noto, serif;"></select> <br> <br> <br><br> <br>
+    <button id="START_THE_GAME" style="font-size: 30px; width:200px; font-family: noto, serif;" onclick="startTheGame()"> 시작하기 </button>
+    <span id="CANT_START" style="color: indianred; font-size:17px; position:absolute; top: 250px; left:250px; font-family: noto, serif;"></span>
+</div>
+
+<span id="COMPLETED_PLAYER_COUNT" style="position:absolute; left:1090px; top:490px; width: 200px; color:gray; font-size:20px; font-family: noto, serif;"></span>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script src="/static/socket.js"></script>
+<script>
+
+    let BJ;
+    let END_TIME = 2;
+    let END_COND = 2;
+    let CURRENT_TURN = -1;
+    let CURRENT_WHITE_CARD = '';
+    let CURRENT_CARD_CZAR = '';
+    let PLAYER_COUNT = 0;
+    let COMPLETED_PLAYER_COUNT = 0;
+    let SENTENCES = [];
+    let NICKNAMES = [];
+    let CURRENT_CARD_INDEX = 0;
+    let SCORES = {};
+    let BLANK_COUNT = 0;
+    let CARD_ARRAY = '';
+    let REROLLS = 12;
+    const LOG41 = Math.log(41);
+
+    const SOUND_PAPER_1 = new Audio('/static/sounds/paper1.ogg');
+    const SOUND_PAPER_2 = new Audio('/static/sounds/paper2.ogg');
+    const SOUND_PAPER_3 = new Audio('/static/sounds/paper3.ogg');
+    const SOUND_PORTAL = new Audio('/static/sounds/portal.ogg');
+    const SOUND_CLICK = new Audio('/static/sounds/click.ogg');
+    const SOUND_SCORE = new Audio('/static/sounds/score.ogg');
+    const SOUND_DING = new Audio('/static/sounds/ding.ogg');
+    const SOUND_DDN = new Audio('/static/sounds/ddn.ogg');
+    const SOUND_DNDDDDNDN = new Audio('/static/sounds/levelup.mp3');
+
+    SOUND_PORTAL.volume = 0.75
+    SOUND_PORTAL.playbackRate = 1.5;
+    SOUND_CLICK.volume = 0.7
+    SOUND_SCORE.volume = 0.5
+    SOUND_DING.volume = 0.7
+    SOUND_DNDDDDNDN.volume = 0.7
+
+    const dropdown = document.getElementById('SELECT_CARD_ARRAY');
+    let arrays = ['한국어 EXTENDED', '한국어', '영어', '한국어 전체이용가'];
+    arrays.forEach(i => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dropdown.appendChild(option);
+    })
+    dropdown.addEventListener('mousedown', function(e) {
+        SOUND_CLICK.play();
+    })
+
+
+    const dropdown2 = document.getElementById('CONDITION_NUMBER');
+    let arrays2 = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
+    arrays2.forEach(i => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dropdown2.appendChild(option);
+    })
+    dropdown2.addEventListener('mousedown', function(e) {
+        SOUND_CLICK.play();
+    })
+
+
+    const dropdown3 = document.getElementById('CONDITION_OPTION');
+    let arrays3 = ['점을 얻은 사람이 나왔을 때', '바퀴를 돌았을 때'];
+    arrays3.forEach(i => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dropdown3.appendChild(option);
+    })
+    dropdown3.addEventListener('mousedown', function(e) {
+        SOUND_CLICK.play();
+    })
+
+
+
+    function areYouTheBj() {
+        let nick = localStorage.getItem('nick');
+        let notTheBj = BJ !== nick;
+        document.getElementById('SELECT_CARD_ARRAY').disabled = notTheBj
+        document.getElementById('CONDITION_OPTION').disabled = notTheBj
+        document.getElementById('CONDITION_NUMBER').disabled = notTheBj
+        document.getElementById('START_THE_GAME').disabled = notTheBj
+    }
+
+    document.getElementById('SELECT_CARD_ARRAY').addEventListener('change', function(e) {
+        let selected = e.target.value;
+        let room = location.toString().split('n=')[1];
+        socket.emit('update_card_desc', {
+            roomNumber: room,
+            selected: selected
+        })
+    })
+
+    document.getElementById('CONDITION_OPTION').addEventListener('change', function(e) {
+        let selected = e.target.value;
+        let room = location.toString().split('n=')[1];
+        socket.emit('update_condition_option', {
+            roomNumber: room,
+            selected: selected
+        })
+    })
+    document.getElementById('CONDITION_NUMBER').addEventListener('change', function(e) {
+        let selected = e.target.value;
+        let room = location.toString().split('n=')[1];
+        socket.emit('update_condition_number', {
+            roomNumber: room,
+            selected: selected
+        })
+    })
+
+
+/*
+    window.addEventListener('unload', () => {
+        let loc = location.toString();
+        if(loc.includes("?n=")) {
+            let roomNumber = loc.split("?n=")[1]
+            fetch('/leave', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    roomNumber: roomNumber,
+                    leaver: localStorage.getItem('nick')
+                }),
+                keepalive: true
+            })
+        }
+    })
+*/
+
+    window.addEventListener('pagehide', () => {
+        let loc = location.toString();
+        if(loc.includes("?n=")) {
+
+            let nick = localStorage.getItem('nick');
+
+
+            let roomNumber = loc.split("?n=")[1]
+            fetch('/leave', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    roomNumber: roomNumber,
+                    leaver: nick
+                }),
+                keepalive: true
+            })
+        }
+    })
+
+
+
+
+    async function openThisPage() {
+        const nick = localStorage.getItem('nick');
+        let loc = location.toString();
+        const response = await fetch('/static/rooms.txt');
+        const roomList = await response.text();
+        const inputRoomNumber = loc.split('n=')[1];
+
+        if(nick == null) {
+            history.replaceState(null, '', '/main');
+            location.reload()
+            alert('닉네임을 정해야 게임에 참여할 수 있습니다!')
+        }
+        else if(roomList.includes(',' + nick + ';') || roomList.includes(',' + nick + ',') || roomList.includes(';' + nick + '\n') || roomList.includes(';' + nick + ';')) {
+            alert('당신은 이미 다른 방에 참여하고 있습니다.')
+            history.replaceState(null, '', '/room_not_found');
+        }
+
+        else if (loc.includes('room?n=')) {
+            if(!roomList.includes('[' + inputRoomNumber + ']')) {
+                history.replaceState(null, '', '/room_not_found');
+                location.reload()
+            }
+            else if(roomList.includes('[' + inputRoomNumber + ']:1,')) {
+                alert('아직은 플레이중인 방에 입장할 수 없습니다. 근데 앞으로도 관전 기능을 만들지는 모르겠으니까 그냥 디코 화공으로 보든지 하시죠')
+                history.replaceState(null, '', '/room_not_found');
+            }
+
+            else {
+
+                const k = await fetch('/join_room', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({roomNumber: inputRoomNumber, joiner: localStorage.getItem('nick')})
+                })
+
+                SOUND_CLICK.play();
+
+                document.getElementById('ROOM_TITLE').innerText = '비인간적인 방 ' + inputRoomNumber + '.'
+
+                let got = await k.text()
+                let gotArray = got.split("\n")
+                let players = [];
+                let bj;
+                let writeThis = "";
+
+                for (let i = 0; i < gotArray.length; i++) {
+                    if (gotArray[i].startsWith('[' + inputRoomNumber + ']')) {
+                        let temp = gotArray[i].split(',')
+                        players = temp[6].split(';')
+                        bj = temp[5];
+                    }
+                }
+
+                for (let i = 0; i < players.length; i++) {
+                    if (players[i] === bj) {
+                        writeThis += bj + ' (방장) <br>'
+                        BJ = bj;
+                        areYouTheBj();
+                    } else writeThis += players[i] + '<br>'
+                }
+
+                createChattingWindow();
+
+                socket.emit('join_check', {roomNumber: inputRoomNumber});
+
+                socket.emit('join_event', {
+                    roomNumber: inputRoomNumber,
+                    text: writeThis
+                });
+
+
+                socket.emit('chat', {
+                    roomNumber: location.toString().split('n=')[1],
+                    chat: '<span style="color: yellow;"> (방에 들어옴)</span>',
+                    nick: nick
+                })
+
+
+            }
+
+        }
+
+        else {
+
+            let r = String.fromCharCode(Math.floor(Math.random() * 26) + 97) + String.fromCharCode(Math.floor(Math.random() * 26) + 97) + Math.floor(Math.random() * 10000000).toString();
+            history.replaceState(null, '', '/room?n=' + r)
+            let n = localStorage.getItem('nick')
+            BJ = n;
+            areYouTheBj();
+
+            const k = await fetch('/create_room', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({roomNumber: r, nick: n})
+            })
+
+            SOUND_CLICK.play();
+
+            document.getElementById('ROOM_TITLE').innerText = '비인간적인 방 ' + r + '.'
+
+            socket.emit('join_check', { roomNumber: r.toString() });
+
+            socket.emit('join_event', {
+                roomNumber: r.toString(),
+                text: n + ' (방장) <br>'
+            });
+
+            socket.emit('chat', {
+                roomNumber: location.toString().split('n=')[1],
+                chat: '<span style="color: yellow;"> (방에 들어옴)</span>',
+                nick: nick
+            })
+
+            createChattingWindow()
+        }
+    }
+
+    async function startTheGame() {
+        const resp = await fetch('/static/rooms.txt');
+        const allRoomInfo = await resp.text();
+        let allRoomInfoSplit = allRoomInfo.split('\n');
+        let currentRoomInfo = '';
+        const currentRn = location.toString().split('n=')[1];
+        allRoomInfoSplit.forEach(r => {
+            if(r.startsWith('[' + currentRn + ']')) {
+                currentRoomInfo = r;
+            }
+        })
+
+        let playerCount = parseInt(currentRoomInfo.split(',')[4]);
+
+        if(playerCount < 3) {
+            document.getElementById('CANT_START').innerText = '3명 이상이 있어야 시작할 수 있습니다!'
+        }
+
+        else {
+            let roomNumber = location.toString().split('n=')[1];
+            let endTime = document.getElementById('CONDITION_NUMBER').value
+            let condition = document.getElementById('CONDITION_OPTION').value === '바퀴를 돌았을 때' ? 1 : 2
+            let cardArray = document.getElementById('SELECT_CARD_ARRAY').value;
+            switch (cardArray) {
+                case '한국어 EXTENDED':
+                    cardArray = 'black;white';
+                    break;
+                case '한국어':
+                    cardArray = 'orblack;orwhite'
+                    break;
+                case '영어':
+                    cardArray = 'enblack;enwhite'
+                    break;
+                case '한국어 전체이용가':
+                    cardArray = 'softblack;softwhite'
+                    break;
+            }
+
+
+            socket.emit('game_start', {
+                roomNumber: roomNumber,
+                condition: condition,
+                time: endTime,
+                cards: cardArray
+            })
+
+
+
+
+        }
+    }
+
+
+    function czarsTurnReady() {
+        let thisGuysNick = localStorage.getItem('nick');
+        if(thisGuysNick === CURRENT_CARD_CZAR) {
+            SOUND_DING.play();
+            document.getElementById('YOU_ARE_THE_CZAR').innerText = '모두가 문장을 완성했습니다!'
+            document.getElementById('YOU_ARE_THE_CZAR_DESC').innerHTML = '<span onclick="czarStartReady()" style="color: deepskyblue; cursor:pointer;"><u>여기</u></span>를 눌러서 플레이어들이 만든 문장을 보세요!'
+            socket.emit('req_sentences', {
+                roomNumber: location.toString().split('n=')[1]
+            })
+        }
+    }
+
+    // 카드 차르만 실행함
+    function czarStartReady() {
+        socket.emit('czar_start_ready', {
+            roomNumber: location.toString().split('n=')[1]
+        })
+        document.getElementById('YOU_ARE_THE_CZAR').innerText = '문장을 선택하세요!'
+        document.getElementById('YOU_ARE_THE_CZAR_DESC').innerHTML = '<span onclick="anotherSentence(0)" style="user-select:none; color: deepskyblue; cursor:pointer;"><u>[이전]</u></span> 　 <span onclick="anotherSentence(1)" style="user-select:none; color: deepskyblue; cursor:pointer;"><u>[다음]</u></span> 　 <span onclick="give_score()" style="user-select:none; color: deepskyblue; cursor:pointer;"><u>[점수 주기]</u></span>'
+    }
+
+    // 모두가 실행함
+    async function czarStart() {
+        CURRENT_CARD_INDEX = 0;
+        let t = 0, w = 320, h = 432, top = 50, left = 822;
+        const whiteCard = document.getElementById('WHITE_CARD').style;
+        document.getElementById('COMPLETED_PLAYER_COUNT').innerText = ''
+        while(t < 100) {
+            t++;
+            w += 6;
+            h -= 2;
+            top++;
+            left -= 2.5;
+            whiteCard.height = h + 'px'
+            whiteCard.width = w + 'px'
+            whiteCard.left = left + 'px'
+            whiteCard.top = top + 'px'
+            await sleep(1)
+        }
+        SOUND_PAPER_1.play()
+    }
+
+
+
+    function anotherSentence(n) {
+        socket.emit('see_another_sentence', {
+            roomNumber: location.toString().split('n=')[1],
+            isThisNext: n
+        })
+    }
+
+
+    function give_score() {
+        if(!document.getElementById('WHITE_CARD_TEXT').innerText.includes('_____')) {
+            socket.emit('give_score', {
+                roomNumber: location.toString().split('n=')[1],
+                nick: NICKNAMES[CURRENT_CARD_INDEX],
+                currentScore: SCORES[NICKNAMES[CURRENT_CARD_INDEX]]
+            })
+        }
+        // else 안 써도 왜 선택 안되는지 아이큐가 적어도 80을 넘으면 알지 않을까?
+    }
+
+
+    function createChattingWindow() {
+        let k = document.createElement('textarea')
+        k.id = 'CHAT_INPUT'
+        k.style = 'position: absolute; font-size: 25px; top: 1000px; left: 750px; width:920px; height:40px; resize:none; font-family: noto, serif;'
+        k.placeholder = '채팅 입력...'
+        document.body.appendChild(k)
+        k.addEventListener('keydown', function(e) {
+            let chat = document.getElementById('CHAT_INPUT').value;
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                if(chat !== '') {
+                    socket.emit('chat', {
+                        roomNumber: location.toString().split('n=')[1],
+                        chat: chat,
+                        nick: localStorage.getItem('nick')
+                    })
+                    document.getElementById('CHAT_INPUT').value = '';
+                }
+            }
+        })
+
+        let kk = document.createElement('button')
+        kk.id = 'CHAT_ENTER'
+        kk.style = 'position: absolute; font-size: 25px; top: 1000px; left: 1700px; width:120px; height:45px; font-family: noto, serif;'
+        kk.innerText = '전송'
+        kk.onclick = sendChat;
+        document.body.appendChild(kk)
+    }
+
+
+    function sendChat() {
+        let chat = document.getElementById('CHAT_INPUT').value;
+        if(chat !== '') {
+            socket.emit('chat', {
+                roomNumber: location.toString().split('n=')[1],
+                chat: chat,
+                nick: localStorage.getItem('nick')
+            })
+            document.getElementById('CHAT_INPUT').value = '';
+        }
+    }
+
+    openThisPage();
+    areYouTheBj();
+
+    document.getElementById('CURRENT_NICK').innerText = '당신의 닉네임: ' + localStorage.getItem('nick')
+    localStorage.setItem('cards', '[]')
+
+
+
+</script>
+
+</body>
+</html>

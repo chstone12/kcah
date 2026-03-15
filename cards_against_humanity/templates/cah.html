@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>비인간적인 카드 게임</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <style>
+        .SHADOW {
+            box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px, rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
+        }
+        .DROPSHADOW {
+            box-shadow: rgba(24, 24, 24, 0.4) 5px 5px, rgba(24, 24, 24, 0.3) 10px 10px, rgba(24, 24, 24, 0.2) 15px 15px, rgba(24, 24, 24, 0.1) 20px 20px, rgba(24, 24, 24, 0.05) 25px 25px;
+        }
+        .DESC {
+            background-color: #333333;
+            width: 800px;
+            padding: 20px;
+        }
+        @font-face {
+            font-family: 'noto';
+            src: url('/static/font.ttf') format('truetype');
+        }
+    </style>
+</head>
+<body style="background-color: #222222">
+
+
+<img src="/static/titleimg.png" alt="똥" style="position:absolute; left: 30px; top: 30px;" class="SHADOW">
+
+<span id="TITLE" style="text-shadow: darkred 0 0 9px; position:absolute; left:330px; top: 40px; color:indianred; font-size:50px; width:900px; font-family: noto, serif;">비인간적인 카드 게임.</span>
+<span id="SPLASH" style="text-shadow: red 0 0 10px; position:absolute; left:330px; top: 420px; color:white; font-size:25px; width:1300px; font-family: noto, serif;">“ 너에게 <span style="color:orange;"><b>낙태</b></span> 배틀을 신청한다. ”</span>
+
+<span id="CURRENT_NICK" style="position:absolute; left: 1200px; top: 50px; font-size: 25px; width:400px; color: gold; font-family: noto, serif;">닉네임: </span>
+
+<label>
+    <span style="font-size: 30px; position:absolute; left: 330px; top: 146px; color: white;">닉네임 설정: </span>
+    <textarea placeholder="닉네임 입력..." id="NICKNAME_INPUT" style="position:absolute; left: 500px; top: 150px; resize: none; font-size: 25px; height: 36px; width: 400px; font-family: noto, serif;"></textarea>
+</label>
+<button style="position:absolute; resize: none; left:930px; top: 150px; font-size: 25px; height: 42px; width: 100px; font-family: noto, serif;" onclick="setNick()">완료</button>
+<span style="position:absolute; left:1050px; top: 160px; font-size: 20px; width:600px; color:#aa5555; font-family: noto, serif;" id="NICKNAME_INFO"></span>
+
+
+<span style="font-size: 30px; position:absolute; left: 330px; top: 245px; color: white; ">게임 시작: </span>
+<button style="position:absolute; left: 500px; top: 250px; height:42px; width: 200px; font-size: 25px; font-family: noto, serif;" onclick="createRoom()">방 만들기</button>
+<button style="position:absolute; left: 500px; top: 300px; height:42px; width: 200px; font-size: 25px; font-family: noto, serif;" onclick="joinRoom()">참여하기</button>
+<label>
+    <textarea placeholder="방 번호 입력..." id="ROOM_NUMBER" style="position:absolute; left: 720px; top: 300px; resize: none; font-size: 25px; height: 36px; width: 400px; font-family: noto, serif;"></textarea>
+</label>
+<span style="position:absolute; left: 1135px; top: 315px; font-size: 18px; color: gray; width:400px;">※ 그냥 링크에 직접 접속해도 됩니다.</span>
+
+<div class="DESC DROPSHADOW" style="position:absolute; top: 500px; left: 30px">
+    <span style="color: yellow; font-size: 30px; font-family: noto, serif;"> WHAT TF IS THIS </span>
+    <br> <br>
+    <span style="color: lightyellow; font-size: 19px; font-family: noto, serif;">
+        미국에 Cards Against Humanity라는 유명한 보드게임이 있습니다. <br>
+        카드의 빈칸을 채워서 문장을 만드는 게임인데, 이 게임이 영어인데다가 <br>
+        한국에서는 구하기도 쉽지 않아서 그냥 웹게임으로 만들었습니다. <br> <br>
+        콘솔로 변수 조작하기, 함수 실행하기와 같은 비정상적인 플레이는 <br>
+        막아놓지 않았으므로 괜히 그런 짓 했다가 잘못하면 게임 터집니다. 하지 마세요. <br>
+        중간에 나가는 것도 어느 정도는 신경 써 놨지만 그래도 버그 있을 수 있으니까 나가지 마세요. <br><br>
+        Fanmaid by chstone12.
+    </span>
+</div>
+
+
+<div class="DESC DROPSHADOW" style="position:absolute; top: 500px; left: 930px">
+    <span style="color: yellow; font-size: 30px; font-family: noto, serif;"> HOW  TO PLAY </span>
+    <br> <br>
+    <span style="color: lightyellow; font-size: 19px; font-family: noto, serif;">
+        게임을 시작하면, 제시문이 하나 나오고 한 명을 제외한 나머지 모두에게 7장의 카드가 주어집니다. <br>
+        카드를 받은 플레이어는 카드를 선택(클릭)해서 제시문에 있는 빈칸을 채우면 됩니다.<br>
+        여기서 빈칸이 여러 개인 경우에는 왼쪽 칸부터 채워지며, 이렇게 문장을 완성하면 됩니다.<br>
+        카드를 받지 않은 플레이어는 나머지 모두가 문장을 완성할 때까지 기다렸다가 모두가 완성하면<br>
+        문장을 하나씩 보면서 가장 재밌거나 가장 비인간적인 문장, 또는 가장 맘에 드는 문장을 하나 선택해서<br>
+        그 문장을 만든 사람에게 점수를 줄 수 있습니다. <br>
+        여기서, 문장을 선택할 때에는 그 문장을 누가 만든 것인지 안 보여 줍니다. <br> <br>
+        모바일에서 플레이할 때에는 가로로 하시기 바랍니다.
+    </span>
+</div>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script src="/static/socket.js"></script>
+<script src="/static/nickname.js"></script>
+<script>
+
+
+
+    const splashElem = document.getElementById('SPLASH');
+
+    async function splash() {
+
+        let r = Math.floor(Math.random() * 10);
+
+        switch (r) {
+            case 0:
+                splashElem.innerHTML = '“ 너에게 <span style="color:orange;"><b>낙태</b></span> 배틀을 신청한다. ”';
+                break;
+            case 1:
+                splashElem.innerHTML = '“ 오늘 우리집에 오면 너한테만 <span style="color:orange;"><b>영화 <대홍수></b></span>를 보여줄게. ”';
+                break;
+            case 2:
+                splashElem.innerHTML = '“ 자세히 잘 보면, <span style="color:orange;"><b>신</b></span>은 그냥 <span style="color:orange;"><b>사회에 의미있는 도움을 1도 주지 않기</b></span>입니다. ”';
+                break;
+            case 3:
+                splashElem.innerHTML = '“ 소개팅 상대에게 자기소개를 하는 당신, 무엇을 잘하는 사람이라고 소개할까? <span style="color:orange;"><b>연쇄 살인</b></span>. ”';
+                break;
+            case 4:
+                splashElem.innerHTML = '“ 좋아하는 이성친구에게 <span style="color:orange;"><b>더블 페네트레이션</b></span>으로 마음을 전해서 사귀기 시작했어요! ”';
+                break;
+            case 5:
+                splashElem.innerHTML = '“ 저는 데이트하는 중에 <span style="color:orange;"><b>데이트 폭력</b></span>에 대해 생각하는 걸 좋아합니다. ”';
+                break;
+            case 6:
+                splashElem.innerHTML = '“ <span style="color:orange;"><b>남자로 살기</b></span>를 하는 사람들은 전부 <span style="color:orange;"><b>태극기 집회에 참여하기 위해 수능을 중도포기한 학생</b></span>. ”';
+                break;
+            case 7:
+                splashElem.innerHTML = '“ 아프리카 여캠 방 회장님이 별풍선 100만개를 쏘며 BJ에게 <span style="color:orange;"><b>자살하기</b></span>를 요구했다. ”';
+                break;
+            case 8:
+                splashElem.innerHTML = '“ 저희 클럽에 오신 걸 환영합니다! 당장 <span style="color:orange;"><b>김정은</b></span>과 함께 하룻밤을 시작할까요? ”';
+                break;
+            case 9:
+                splashElem.innerHTML = '“ 미국의 멸망은 <span style="color:orange;"><b>페미니스트</b></span> 때문에 시작될 것입니다. ”';
+                break;
+        }
+        await fadeIn();
+        await sleep(9500);
+        await fadeOut();
+        await splash();
+    }
+
+    const splashStyle = document.getElementById('SPLASH').style;
+    let splashOpacity = 100;
+
+    async function fadeOut() {
+        splashOpacity -= 0.5;
+        splashStyle.opacity = splashOpacity.toString() + '%';
+        if(splashOpacity > 0.1) {
+            await sleep(1)
+            await fadeOut();
+        }
+    }
+
+    async function fadeIn() {
+        splashOpacity += 0.5;
+        splashStyle.opacity = splashOpacity.toString() + '%';
+        if(splashOpacity < 99.9) {
+            await sleep(1)
+            await fadeIn();
+        }
+    }
+
+
+    splash()
+
+
+    let x = 0.0;
+    let y = 0.0;
+    const titleStyle = document.getElementById('TITLE').style;
+
+    async function titleEffect() {
+        x += 0.01;
+        y += 0.007;
+        titleStyle.left = (Math.sin(5 * x) + 330).toString() + 'px';
+        titleStyle.top = (2.5 * Math.cos(2 * y) + 40).toString() + 'px';
+        titleStyle.rotate = (0.5 * Math.sin(x + 1.59)).toString() + 'deg';
+        await sleep(5)
+        await titleEffect();
+    }
+
+    titleEffect();
+
+
+
+
+
+</script>
+
+</body>
+</html>
