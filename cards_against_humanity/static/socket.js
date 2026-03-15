@@ -520,7 +520,7 @@ socket.on('display_chat', function(data) {
     let newChat = document.createElement('span')
     newChat.className = 'CHAT_DISPLAY'
     newChat.innerHTML = '<span style="color: lightyellow">' + nick + ': </span>' + chatting;
-    newChat.style = 'left: 1180px; top: 600px; position:absolute; z-index: 1; font-family: noto, serif;'
+    newChat.style = 'left: 1180px; top: 600px; position:absolute; z-index: 1; font-family: noto, serif; width: 600px;'
     document.body.appendChild(newChat);
 })
 
