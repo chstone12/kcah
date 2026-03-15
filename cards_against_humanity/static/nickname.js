@@ -91,7 +91,7 @@ function createRoom() {
         document.getElementById('NICKNAME_INFO').innerText = '닉네임을 정해야 방을 만들 수 있습니다!';
         return;
     }
-    window.open(location.toString().replace('main', '') + '/room', '_blank')
+    window.open(location.toString().replace('main', '') + 'room', '_blank')
 }
 
 
@@ -101,7 +101,7 @@ function joinRoom() {
         return;
     }
     let n = document.getElementById('ROOM_NUMBER').value;
-    window.open(location.toString().replace('main', '') + '/room?n=' + n, '_blank')
+    window.open(location.toString().replace('main', '') + 'room?n=' + n, '_blank')
 }
 
 
