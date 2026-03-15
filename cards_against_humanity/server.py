@@ -252,7 +252,7 @@ def gs(data):
     using_temp = str(data['cards']).split(';')
 
     sentences[room_id] = []
-    
+
     using1 = using_temp[0]
     using2 = using_temp[1]
 

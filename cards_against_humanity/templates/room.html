@@ -87,6 +87,8 @@
 </div>
 
 <span id="COMPLETED_PLAYER_COUNT" style="position:absolute; left:1090px; top:490px; width: 200px; color:gray; font-size:20px; font-family: noto, serif;"></span>
+<button onclick="leaveGame()" style="position:absolute; top:1000px; left:100px; font-size:25px; width:100px; height:45px;">나가기</button>
+<span style="position:absolute; top:1005px; left: 220px; font-size:15px; width: 200px; color:#999999">방에서 나갈 때 직접 창 닫지 마시고 요걸 눌러주세요</span>
 
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script src="/static/socket.js"></script>
@@ -488,6 +490,7 @@
         k.addEventListener('keydown', function(e) {
             let chat = document.getElementById('CHAT_INPUT').value;
             if(e.key === 'Enter') {
+                localStorage.setItem('lastChat', chat)
                 e.preventDefault();
                 if(chat !== '') {
                     socket.emit('chat', {
@@ -497,6 +500,9 @@
                     })
                     document.getElementById('CHAT_INPUT').value = '';
                 }
+            }
+            else if(e.key === 'ArrowUp') {
+                document.getElementById('CHAT_INPUT').value = localStorage.getItem('lastChat')
             }
         })
 
@@ -521,12 +527,52 @@
         }
     }
 
+    function leaveGame() {
+        window.close();
+        if(!window.closed) {
+
+            let loc = location.toString();
+            if(loc.includes("?n=")) {
+
+                let nick = localStorage.getItem('nick');
+
+
+                let roomNumber = loc.split("?n=")[1]
+                fetch('/leave', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        roomNumber: roomNumber,
+                        leaver: nick
+                    }),
+                    keepalive: true
+                })
+            }
+
+            history.replaceState(null, '', '/main');
+            location.reload();
+        }
+    }
+
     openThisPage();
     areYouTheBj();
 
     document.getElementById('CURRENT_NICK').innerText = '당신의 닉네임: ' + localStorage.getItem('nick')
     localStorage.setItem('cards', '[]')
 
+
+    window.addEventListener('keydown', function(e) {
+        if(e.ctrlKey) {
+            if(e.key === 'w' || e.key === 'F4') {
+                e.preventDefault();
+                alert('나갈 때에는 밑에 있는 나가기 버튼을 눌러주세요.')
+            }
+        }
+        else if(e.altKey && e.key === 'F4') {
+            e.preventDefault();
+            alert('나갈 때에는 밑에 있는 나가기 버튼을 눌러 주세요.')
+        }
+    })
 
 
 </script>

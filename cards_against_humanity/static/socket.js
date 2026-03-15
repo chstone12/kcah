@@ -184,7 +184,7 @@ socket.on('sentence_maid', function(data) {
     }
 })
 
-socket.on('send_sentences', function(data) {
+socket.on('send_sentences', function(data) {ㅊ
     NICKNAMES = data.nicks;
     SENTENCES = data.sentences;
 })
