@@ -41,8 +41,8 @@ async function setNick() {
     }
     else {
 
-        // Foxified <- 이 씨발새끼 때문에 console.log 비활성화돼서 버그 찾는다고 2시간 반을 쳐 날렸다 나가 뒤져라 그냥 ㅗ
-        // 어떤 개씨발자가 console.log를 덮어씌울 생각을 쳐 한 거냐?
+        // Foxified <- 이새끼 때문에 console.log 비활성화돼서 버그 찾는다고 2시간 반을 날렸다
+        // 어떤 개 발자가 console.log를 덮어씌울 생각을 한 거냐?
 
         const response = await fetch('/static/nicknames.txt');
         const data = await response.text();
