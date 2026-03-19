@@ -275,7 +275,7 @@ socket.on('game_start', async function(data) {
 
     if(document.getElementById('REROLL_BUTTON') == null) {
         let rerollButton = document.createElement('button');
-        rerollButton.style = 'position:absolute; left:230px; top: 1000px; height:40px; width:200px; font-family: noto, serif; font-size: 25px;'
+        rerollButton.style = 'position:absolute; left:580px; top: 1000px; height:40px; width:150px; font-family: noto, serif; font-size: 25px;'
         rerollButton.innerText = '카드 리롤'
         rerollButton.id = 'REROLL_BUTTON'
         rerollButton.onclick = reroll;
@@ -283,11 +283,13 @@ socket.on('game_start', async function(data) {
         document.body.appendChild(rerollButton);
 
         let rerollInfo = document.createElement('span')
-        rerollInfo.style = 'position:absolute; left: 450px; top: 1000px; width:200px; height:40px; font-family: noto, serif; font-size: 20px; color: #444444'
+        rerollInfo.style = 'position:absolute; left: 400px; top: 1000px; width:200px; height:40px; font-family: noto, serif; font-size: 20px; color: #444444'
         rerollInfo.innerText = REROLLS + '턴 후 사용 가능'
         rerollInfo.id = 'REROLL_INFO'
         document.body.appendChild(rerollInfo)
     }
+
+
 
     whiteCard.innerHTML = '<span id="WHITE_CARD_TEXT" style="color: white; font-size: 28px; font-family: \'noto\',serif;">' + CURRENT_WHITE_CARD + '</span><span style="width: 100%; position:absolute; bottom: 3.57%; left: 14px; color: white; font-size:12px; font-family: \'noto\', serif">Korean Cards Against Humanity</span>'
 
