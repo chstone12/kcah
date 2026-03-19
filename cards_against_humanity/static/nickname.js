@@ -13,6 +13,10 @@ async function setNick() {
         document.getElementById('NICKNAME_INFO').innerText = '닉네임에 콜론이 들어가면 안 됩니다!'
         return;
     }
+    else if(nickInput.includes(',')) {
+        document.getElementById('NICKNAME_INFO').innerText = '닉네임에 쉼표가 들어가면 안 됩니다!'
+        return;
+    }
     else if(nickInput.includes(' ') || nickInput.includes('　')) {
         document.getElementById('NICKNAME_INFO').innerText = '닉네임에 띄어쓰기가 들어가면 안 됩니다!'
         return;
