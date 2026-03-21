@@ -790,7 +790,7 @@ Stalin
 Standing in front of condoms in a convenience store, holding a needle in hand
 Statue of Liberty
 Stokholm syndrome
-Storing 32 people's sex to optimize the memory usage
+Storing 32 people's sex in an int to optimize the memory usage
 Students who have run away from their home
 Studying
 Subtracting
@@ -916,7 +916,7 @@ Wet socks I've wearing for 3 days
 White people
 Wifi password
 Windmill made with corps
-Wing-stabilized separation armor-piercing shell
+Wing stabilization-separator armored bullet
 Women
 Women of color
 World of warcraft
