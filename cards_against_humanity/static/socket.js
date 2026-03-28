@@ -212,6 +212,7 @@ socket.on('game_start', async function(data) {
     CARD_ARRAY = data.card_array;
     REROLLS = 2;
     SENTENCES = [];
+    NICKNAMES = [];
 
     document.getElementById('ROOM_SETTING').remove();
     let t = data.text.split('/');
