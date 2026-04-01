@@ -222,9 +222,13 @@
     })
 */
 
+    let IS_HE_LEAVING = false;
+
     window.addEventListener('pagehide', () => {
         let loc = location.toString();
         if(loc.includes("?n=")) {
+
+            IS_HE_LEAVING = true;
 
             let nick = localStorage.getItem('nick');
 
@@ -529,7 +533,10 @@
 
     function leaveGame() {
         window.close();
-        if(!window.closed) {
+
+        let closed = window.closed;
+
+        if(!closed || (closed && !IS_HE_LEAVING)) {
 
             let loc = location.toString();
             if(loc.includes("?n=")) {
